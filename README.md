@@ -101,26 +101,26 @@ GET /score/{userId}
 
 #### Setup
 
-* [ ] Criar projeto Spring Boot
-* [ ] Adicionar Spring Web
+* [x] Criar projeto Spring Boot
+* [x] Adicionar Spring Web
 
 #### Integração
 
-* [ ] Criar ViaCepClient (Feign ou RestTemplate)
-* [ ] Criar DTO: ViaCepResponse
+* [x] Criar ViaCepClient (Feign ou RestTemplate)
+* [x] Criar DTO: ViaCepResponse
 
 #### Regra de Negócio
 
-* [ ] Criar GeoService
-* [ ] Tratar CEP inválido (`erro = true`)
+* [x] Criar GeoService
+* [x] Tratar CEP inválido (`erro = true`)
 
 #### Endpoint
 
-* [ ] GET /geo/{cep}
+* [x] GET /geo/{cep}
 
 #### Teste
 
-* [ ] Testar no Postman
+* [x] Testar no Postman
 
 ---
 
