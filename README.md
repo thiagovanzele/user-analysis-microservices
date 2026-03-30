@@ -128,8 +128,8 @@ GET /score/{userId}
 
 #### Setup
 
-* [ ] Criar projeto Spring Boot
-* [ ] Adicionar:
+* [x] Criar projeto Spring Boot
+* [x] Adicionar:
 
   * Spring Web
   * Spring Data JPA
@@ -138,21 +138,21 @@ GET /score/{userId}
 
 #### Configuração
 
-* [ ] Habilitar Feign (`@EnableFeignClients`)
+* [x] Habilitar Feign (`@EnableFeignClients`)
 
 #### Modelagem
 
-* [ ] Criar entidade Usuario
-* [ ] Criar Address com `@Embeddable`
+* [x] Criar entidade Usuario
+* [x] Criar Address com `@Embeddable`
 
 #### Integração
 
-* [ ] Criar GeoClient (Feign → geo-service)
+* [x] Criar GeoClient (Feign → geo-service)
 
 #### Regra de Negócio
 
-* [ ] Criar UsuarioService
-* [ ] No CREATE:
+* [x] Criar UsuarioService
+* [x] No CREATE:
 
   * Chamar geo-service
   * Montar Address
@@ -160,13 +160,13 @@ GET /score/{userId}
 
 #### Endpoints
 
-* [ ] POST /users
+* [x] POST /users
 * [ ] GET /users/{id}
 
 #### Testes
 
-* [ ] Criar usuário com CEP
-* [ ] Validar endereço salvo
+* [x] Criar usuário com CEP
+* [x] Validar endereço salvo
 * [ ] Garantir que GET não chama geo-service
 
 ---
