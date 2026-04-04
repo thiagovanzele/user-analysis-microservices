@@ -15,7 +15,7 @@ public class GeoService {
     }
 
     public ViaCepResponse buscarCep(String cep) {
-        cep = cep.replace("-", "");
+        cep = cep.replace("-", "").trim();
         var response = client.buscarCep(cep);
 
         if (response.erro() != null && response.erro()) {
