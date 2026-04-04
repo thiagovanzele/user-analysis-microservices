@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table
+import java.math.BigDecimal;
+
+@Table(name = "usuario")
 @Entity
 @Getter
 @Setter
@@ -20,8 +22,11 @@ public class Usuario {
 
     private String nome;
 
+    private BigDecimal renda;
+
     @Embedded
     private Endereco endereco;
 
-
 }
+
+
