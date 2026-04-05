@@ -9,22 +9,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("""
             SELECT u FROM Usuario u
-                    WHERE u.endereco.uf = :uf
+                    WHERE u.endereco.uf IN (:ufs)
             """)
-    Page<Usuario> buscarUsuariosPorUf(String uf, Pageable pageable);
+    Page<Usuario> buscarUsuariosPorUf(List<UF> ufs, Pageable pageable);
 
     @Query("""
                 SELECT u FROM Usuario u
-                WHERE u.endereco.uf = :uf
+                WHERE u.endereco.uf IN (:ufs)
                 AND u.renda >= :renda
             """)
-    Page<Usuario> buscarUsuarioPorUfERenda(String uf, BigDecimal renda, Pageable pageable);
+    Page<Usuario> buscarUsuarioPorUfERenda(List<UF> ufs, BigDecimal renda, Pageable pageable);
 
     @Query("""
                 SELECT u FROM Usuario u

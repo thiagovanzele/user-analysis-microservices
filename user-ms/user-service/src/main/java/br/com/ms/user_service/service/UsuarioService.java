@@ -15,7 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -30,12 +32,19 @@ public class UsuarioService {
     }
 
     public PageResponse<UsuarioResponse> buscarComFiltros(String uf, BigDecimal renda, Pageable pageable) {
+        List<UF> ufsForSearch;
+        if (uf == null) {
+            ufsForSearch = gerarUfs();
+        } else {
+            ufsForSearch = List.of(normalizeUf(uf));
+        }
+
         if (uf != null && renda != null) {
-            return buscarUsuarioPorUfERenda(uf, renda, pageable);
+            return buscarUsuarioPorUfERenda(ufsForSearch, renda, pageable);
         }
 
         if (uf != null) {
-            return buscarUsuariosPorUf(uf, pageable);
+            return buscarUsuariosPorUf(ufsForSearch, pageable);
         }
 
         if (renda != null) {
@@ -85,7 +94,13 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNome(request.nome());
         usuario.setEndereco(endereco);
-        usuario.setRenda(request.renda());
+        usuario.setEmail(request.email());
+
+        if (request.renda() == null) {
+            usuario.setRenda(BigDecimal.valueOf(0));
+        } else {
+            usuario.setRenda(request.renda());
+        }
 
         usuarioRepository.save(usuario);
 
@@ -94,20 +109,20 @@ public class UsuarioService {
 
     public void seedDB() {
         List<UsuarioRequest> usuarios = List.of(
-                new UsuarioRequest("Thiago", "09185030", BigDecimal.valueOf(5000.00)),
-                new UsuarioRequest("Tamires", "09061030", BigDecimal.valueOf(3000.00)),
-                new UsuarioRequest("Carlos", "01001000", BigDecimal.valueOf(7000.00)),
-                new UsuarioRequest("Ana", "20040002", BigDecimal.valueOf(2500.00)),
-                new UsuarioRequest("Fernanda", "30140071", BigDecimal.valueOf(4500.00)),
-                new UsuarioRequest("Lucas", "40010000", BigDecimal.valueOf(6000.00)),
-                new UsuarioRequest("Carlos", "01001000", BigDecimal.valueOf(7000.00)),
-                new UsuarioRequest("Ana", "20040002", BigDecimal.valueOf(2500.00)),
-                new UsuarioRequest("Fernanda", "30140071", BigDecimal.valueOf(4500.00)),
-                new UsuarioRequest("Lucas", "01311000", BigDecimal.valueOf(6000.00)),
-                new UsuarioRequest("Mariana", "30130010", BigDecimal.valueOf(3500.00)),
-                new UsuarioRequest("João", "80010010", BigDecimal.valueOf(2000.00)),
-                new UsuarioRequest("Patricia", "90020120", BigDecimal.valueOf(8000.00)),
-                new UsuarioRequest("Rafael", "88015300", BigDecimal.valueOf(5500.00))
+                new UsuarioRequest("Thiago", "09185030", "thiago.testemicroservicos@proton.me", BigDecimal.valueOf(9000.00)),
+                new UsuarioRequest("Tamires", "09061030", "tamires@gmail.com", BigDecimal.valueOf(3000.00)),
+                new UsuarioRequest("Carlos", "01001000", "carlos1@gmail.com", BigDecimal.valueOf(7000.00)),
+                new UsuarioRequest("Ana", "20040002", "ana1@gmail.com", BigDecimal.valueOf(2500.00)),
+                new UsuarioRequest("Fernanda", "30140071", "fernanda1@gmail.com", BigDecimal.valueOf(4500.00)),
+                new UsuarioRequest("Lucas", "40010000", "lucas1@gmail.com", BigDecimal.valueOf(6000.00)),
+                new UsuarioRequest("Carlos", "01001000", "carlos2@gmail.com", BigDecimal.valueOf(7000.00)),
+                new UsuarioRequest("Ana", "20040002", "ana2@gmail.com", BigDecimal.valueOf(2500.00)),
+                new UsuarioRequest("Fernanda", "30140071", "fernanda2@gmail.com", BigDecimal.valueOf(4500.00)),
+                new UsuarioRequest("Lucas", "01311000", "lucas2@gmail.com", BigDecimal.valueOf(6000.00)),
+                new UsuarioRequest("Mariana", "30130010", "mariana@gmail.com", BigDecimal.valueOf(3500.00)),
+                new UsuarioRequest("João", "80010010", "joao@gmail.com", BigDecimal.valueOf(2000.00)),
+                new UsuarioRequest("Patricia", "90020120", "patricia@gmail.com", BigDecimal.valueOf(8000.00)),
+                new UsuarioRequest("Rafael", "88015300", "rafael@gmail.com", BigDecimal.valueOf(5500.00))
         );
 
         usuarios.forEach(this::criarUsuario);
@@ -118,15 +133,8 @@ public class UsuarioService {
                 .orElseThrow(() -> new ObjetoNaoEncontradoException("Usuário com id '" + usuarioId + "' não encontrado"));
     }
 
-    private PageResponse<UsuarioResponse> buscarUsuarioPorUfERenda(String uf, BigDecimal renda, Pageable pageable) {
-        uf = uf.toUpperCase().trim();
-        try {
-            UF.valueOf(uf);
-        } catch (IllegalArgumentException e) {
-            throw new ArgumentoInvalidoException("UF inválido");
-        }
-
-        Page<Usuario> usuarios = usuarioRepository.buscarUsuarioPorUfERenda(uf, renda, pageable);
+    private PageResponse<UsuarioResponse> buscarUsuarioPorUfERenda(List<UF> ufForSearch, BigDecimal renda, Pageable pageable) {
+        Page<Usuario> usuarios = usuarioRepository.buscarUsuarioPorUfERenda(ufForSearch, renda, pageable);
         Page<UsuarioResponse> responsePage =
                 usuarios.map(UsuarioResponse::fromEntity);
 
@@ -141,18 +149,21 @@ public class UsuarioService {
 
     }
 
-    private PageResponse<UsuarioResponse> buscarUsuariosPorUf(String uf, Pageable pageable) {
-        uf = uf.toUpperCase().trim();
-        try {
-            UF.valueOf(uf);
-        } catch (IllegalArgumentException e) {
-            throw new ArgumentoInvalidoException("UF inválido");
-        }
-
-        Page<Usuario> usuarios = usuarioRepository.buscarUsuariosPorUf(uf, pageable);
+    private PageResponse<UsuarioResponse> buscarUsuariosPorUf(List<UF> ufForSearch, Pageable pageable) {
+        Page<Usuario> usuarios = usuarioRepository.buscarUsuariosPorUf(ufForSearch, pageable);
         Page<UsuarioResponse> responsePage =
                 usuarios.map(UsuarioResponse::fromEntity);
         return PageResponse.fromPage(responsePage);
+    }
+
+    private List<UF> gerarUfs() {
+        return List.of(UF.values());
+    }
+
+    private UF normalizeUf(String ufFromApi) {
+        return UF.fromApi(ufFromApi)
+                .orElseThrow(() -> new ArgumentoInvalidoException("UF inválidO"));
+
     }
 
 }

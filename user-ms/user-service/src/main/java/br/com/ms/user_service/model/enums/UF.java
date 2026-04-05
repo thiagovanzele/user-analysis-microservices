@@ -3,6 +3,7 @@ package br.com.ms.user_service.model.enums;
 import br.com.ms.user_service.exceptions.ArgumentoInvalidoException;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum UF {
     AC, // Acre
@@ -31,6 +32,12 @@ public enum UF {
     SC, // Santa Catarina
     SP, // São Paulo
     SE, // Sergipe
-    TO  // Tocantins
+    TO;  // Tocantins
+
+    public static Optional<UF> fromApi(String ufFromApi) {
+        return Arrays.stream(values())
+                .filter(uf -> uf.name().equalsIgnoreCase(ufFromApi))
+                .findFirst();
+    }
 
 }
