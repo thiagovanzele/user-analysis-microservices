@@ -1,283 +1,183 @@
-# 🚀 Projeto de Microserviços com Spring Boot + Feign
-
-## 🧠 Visão Geral
-
-Este projeto demonstra uma arquitetura de microserviços utilizando Spring Boot, OpenFeign e comunicação REST.
-
-O sistema é composto por três serviços principais:
-
-* **user-service** → Gerencia usuários e persiste dados
-* **geo-service** → Integra com API externa (ViaCEP)
-* **score-service** → Calcula o score do usuário com base em regras de negócio
+# 🚀 TECH CHALLENGE - DETALHAMENTO DE TASKS
 
 ---
 
-## 🏗️ Arquitetura
+# 👤 PESSOA A — USER (CORE)
 
-```
-[ Cliente ]
+## TASK A1 — Entidade User
+* [ ] Criar classe User com JPA
+* [ ] Criar enum UserType
+* [ ] Mapear campos corretamente
 
-    ↓
-
-user-service
-    ↓
-geo-service → ViaCEP (API externa)
-
-score-service → user-service
-```
+✔ Pronto quando:
+* [ ] Tabela criada automaticamente no banco
 
 ---
 
-## 🧩 Responsabilidades
+## TASK A2 — Repository
+* [ ] Criar UserRepository
+* [ ] Métodos:
+* [ ] findByEmail
+* [ ] findByNomeContaining
 
-### 👤 user-service
-
-* Criar usuários
-* Armazenar endereço usando `@Embeddable`
-* Buscar dados do usuário
-
----
-
-### 🌍 geo-service
-
-* Buscar dados de endereço via API externa
-* Validar CEP
-* Retornar endereço estruturado
+✔ Pronto quando:
+* [ ] Consultas funcionando
 
 ---
 
-### 🧠 score-service
+## TASK A3 — Service
+* [ ] Criar UserService
+* [ ] Implementar:
+* [ ] createUser
+* [ ] listUsers
+* [ ] deleteUser
+* [ ] Validar email único
+* [ ] Atualizar data automaticamente
 
-* Calcular score do usuário
-* Aplicar regras de negócio
-* Retornar classificação
-
----
-
-## 🔄 Fluxos Principais
-
-### 🚀 Criar Usuário
-
-```
-POST /users
-```
-
-1. user-service recebe nome + CEP
-2. Chama geo-service
-3. geo-service chama ViaCEP
-4. Retorna endereço
-5. user-service salva tudo
+✔ Pronto quando:
+* [ ] Regras funcionando corretamente
 
 ---
 
-### 🔍 Buscar Usuário
+## TASK A4 — Controller
+* [ ] Criar endpoints:
+* [ ] POST /users
+* [ ] GET /users
+* [ ] GET /users?name=
+* [ ] DELETE /users/{id}
 
-```
-GET /users/{id}
-```
-
-* Busca direto no banco
-* NÃO chama API externa
-
----
-
-### 🧠 Calcular Score
-
-```
-GET /score/{userId}
-```
-
-1. score-service chama user-service
-2. Aplica regras
-3. Retorna score
+✔ Pronto quando:
+* [ ] Endpoints respondem corretamente
 
 ---
 
-## ✅ Checklist de Implementação
+# 📍 PESSOA B — ADDRESS
+
+## TASK B1 — Entidade Address
+* [ ] Criar classe Address
+* [ ] Relacionar com User (1:1)
+
+✔ Pronto quando:
+* [ ] FK funcionando corretamente
 
 ---
 
-### 🚀 Fase 1 — geo-service
+## TASK B2 — Repository
+* [ ] Criar AddressRepository
 
-#### Setup
-
-* [x] Criar projeto Spring Boot
-* [x] Adicionar Spring Web
-
-#### Integração
-
-* [x] Criar ViaCepClient (Feign ou RestTemplate)
-* [x] Criar DTO: ViaCepResponse
-
-#### Regra de Negócio
-
-* [x] Criar GeoService
-* [x] Tratar CEP inválido (`erro = true`)
-
-#### Endpoint
-
-* [x] GET /geo/{cep}
-
-#### Teste
-
-* [x] Testar no Postman
+✔ Pronto quando:
+* [ ] CRUD funcionando
 
 ---
 
-### 🚀 Fase 2 — user-service
+## TASK B3 — Service
+* [ ] Criar AddressService
+* [ ] Salvar endereço junto com usuário
+* [ ] Atualizar endereço
 
-#### Setup
-
-* [x] Criar projeto Spring Boot
-* [x] Adicionar:
-
-  * Spring Web
-  * Spring Data JPA
-  * Banco (H2 ou PostgreSQL)
-  * OpenFeign
-
-#### Configuração
-
-* [x] Habilitar Feign (`@EnableFeignClients`)
-
-#### Modelagem
-
-* [x] Criar entidade Usuario
-* [x] Criar Address com `@Embeddable`
-
-#### Integração
-
-* [x] Criar GeoClient (Feign → geo-service)
-
-#### Regra de Negócio
-
-* [x] Criar UsuarioService
-* [x] No CREATE:
-
-  * Chamar geo-service
-  * Montar Address
-  * Salvar usuário
-
-#### Endpoints
-
-* [x] POST /users
-* [ ] GET /users/{id}
-
-#### Testes
-
-* [x] Criar usuário com CEP
-* [x] Validar endereço salvo
-* [ ] Garantir que GET não chama geo-service
+✔ Pronto quando:
+* [ ] Endereço vinculado corretamente ao usuário
 
 ---
 
-### 🚀 Fase 3 — score-service
+# 🔐 PESSOA C — AUTH
 
-#### Setup
+## TASK C1 — Login
+* [ ] Criar endpoint POST /auth/login
+* [ ] Validar login e senha
 
-* [ ] Criar projeto Spring Boot
-* [ ] Adicionar:
-
-  * Spring Web
-  * OpenFeign
-
-#### Integração
-
-* [ ] Criar UserClient (Feign → user-service)
-
-#### Regra de Negócio
-
-* [ ] Criar ScoreService
-* [ ] Implementar regras:
-
-  * Renda
-  * Estado (UF)
-  * Idade (opcional)
-
-#### Endpoint
-
-* [ ] GET /score/{userId}
-
-#### Testes
-
-* [ ] Criar usuário
-* [ ] Chamar endpoint de score
-* [ ] Validar cálculo
+✔ Pronto quando:
+* [ ] Retorna sucesso ou erro corretamente
 
 ---
 
-### 🔥 Fase 4 — Melhorias
+## TASK C2 — Troca de senha
+* [ ] Criar endpoint PUT /users/{id}/password
+* [ ] Validar senha atual
 
-#### Resiliência
-
-* [ ] Adicionar fallback (Feign + Resilience4j)
-* [ ] Tratar falha entre serviços
-
-#### Performance
-
-* [ ] Cachear consultas de CEP no geo-service
-
-#### Qualidade
-
-* [ ] Usar DTOs (não expor entidades)
-* [ ] Criar handler global de exceções
+✔ Pronto quando:
+* [ ] Senha alterada corretamente
 
 ---
 
-### 🧠 Fase 5 — Avançado (Opcional)
+# 🍽️ PESSOA D — RESTAURANT
 
-#### Observabilidade
+## TASK D1 — Entidade
+* [ ] Criar Restaurant
+* [ ] Relacionar com User
 
-* [ ] Logs estruturados
-
-#### Arquitetura
-
-* [ ] API Gateway
-* [ ] Service Discovery
-
-#### Assíncrono
-
-* [ ] Evento: UserCreated
-* [ ] Recalcular score automaticamente
+✔ Pronto quando:
+* [ ] FK funcionando
 
 ---
 
-## 🎯 Ordem de Implementação
+## TASK D2 — Service
+* [ ] Criar RestaurantService
+* [ ] Validar tipo DONO
 
-```
-1. geo-service
-2. user-service
-3. score-service
-4. melhorias
-```
+✔ Pronto quando:
+* [ ] Apenas donos criam restaurante
 
 ---
 
-## 💥 Resultado Final
+## TASK D3 — Repository
+* [ ] Criar RestaurantRepository
 
-Ao concluir este projeto, você terá:
-
-* Arquitetura de microserviços funcional
-* Integração com API externa
-* Comunicação entre serviços com Feign
-* Regras de negócio distribuídas
+✔ Pronto quando:
+* [ ] CRUD funcionando
 
 ---
 
-## 📌 Tecnologias Utilizadas
+# ⚙️ PESSOA E — INFRA / QUALIDADE
 
-* Java + Spring Boot
-* Spring Web
-* Spring Data JPA
-* OpenFeign
-* H2 / PostgreSQL
+## TASK E1 — Docker
+* [ ] Criar Dockerfile
+* [ ] Criar docker-compose
+
+✔ Pronto quando:
+* [ ] Projeto sobe com docker-compose
+
+---
+
+## TASK E2 — Exceptions
+* [ ] Criar GlobalExceptionHandler
+* [ ] Implementar ProblemDetail
+
+✔ Pronto quando:
+* [ ] Erros padronizados
 
 ---
 
-## 🚀 Próximos Passos
+## TASK E3 — Swagger
+* [ ] Documentar endpoints
 
-* Implementar autenticação (JWT)
-* Dockerizar os serviços
-* Adicionar monitoramento (Prometheus, Grafana)
+✔ Pronto quando:
+* [ ] Swagger acessível
 
 ---
+
+## TASK E4 — Postman
+* [ ] Criar collection:
+* [ ] Cadastro
+* [ ] Login
+* [ ] Erros
+
+✔ Pronto quando:
+* [ ] Testes cobrindo principais cenários
+
+---
+
+# ✅ CHECKLIST FINAL
+
+* [ ] CRUD funcionando
+* [ ] Login funcionando
+* [ ] Email único
+* [ ] Troca de senha separada
+* [ ] Swagger OK
+* [ ] Postman OK
+* [ ] Docker rodando
+* [ ] Tratamento de erros OK
+
+---
+
+# 🚀 FIM
